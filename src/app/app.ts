@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { ExchangeRateTableComponent } from '../components/exchange-rate-table/exchange-rate-table';
 
 @Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
+    selector: 'app-root',
+    imports: [ExchangeRateTableComponent],
+    templateUrl: './app.html',
+    styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('ExchangeRate');
+    protected readonly title = signal('ExchangeRate');
 }

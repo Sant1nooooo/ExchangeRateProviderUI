@@ -1,0 +1,85 @@
+<div class="card">
+    <div class="card-header"><h2>📅 Select Date</h2></div>
+    <div class="card-body">
+        <div class="controls-row">
+            <label for="datePicker">Exchange Rate Date:</label>
+            <input type="date" id="datePicker" class="date-input" [formControl]="selectedDate" />
+            <button class="btn btn-primary" id="fetchBtn" (click)="getExchangeRates()">
+                <span>Fetch Rates</span>
+                <span>→</span>
+            </button>
+            <button class="btn btn-outline" (click)="assignDefaultDate()">Today</button>
+        </div>
+    </div>
+</div>
+<div id="state-loaded" class="state-panel active">
+    <div class="card">
+        <div class="card-header">
+            <h2>Exchange Rates</h2>
+            <div class="meta-row">
+                <span class="meta-chip chip-blue">📅 Valid for: {{ validity$ | async }}</span>
+                <span class="meta-chip chip-green">✓ {{ noOfCurrencies$ | async }} Currencies</span>
+            </div>
+        </div>
+        @if (loading$ | async) {
+            <app-loading />
+        }
+        @if (errorMessage$ | async; as errorMessage) {
+            <div class="alert alert-error">
+                <div class="alert-icon">❌</div>
+                <div class="alert-body">
+                    <div class="alert-title">Error — 400 Bad Request Error</div>
+                    <div class="alert-message">
+                        The backend was unable to process your request due to incorrect date
+                        format.<br /><br />
+                        <strong>Details:</strong> {{ errorMessage }}
+                    </div>
+                </div>
+            </div>
+        }
+        @if (rates$ | async; as rates) {
+            @if (rates.length === 0) {
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <div class="empty-title">No rates available</div>
+                    <div class="empty-sub">
+                        The CNB did not publish exchange rates for this date.
+                    </div>
+                    <br />
+                    <button class="btn btn-outline" style="margin: 0 auto">
+                        Try a different date
+                    </button>
+                </div>
+            } @else {
+                <div class="rate-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>Currency</th>
+                                <th>Code</th>
+                                <th class="num">Amount</th>
+                                <th class="num">Rate (CZK)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (rate of rates; track rate.currencyCode) {
+                                <tr>
+                                    <td>{{ rate.country }}</td>
+                                    <td>{{ rate.currency }}</td>
+                                    <td>
+                                        <span class="currency-code">{{ rate.currencyCode }}</span>
+                                    </td>
+                                    <td class="num">{{ rate.amount }}</td>
+                                    <td class="num">
+                                        <span class="rate-value">{{ rate.rate }}</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    </div>
+</div>
